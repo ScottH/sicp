@@ -1,0 +1,266 @@
+* Some notes on running racket in emacs org mode
+
+
+
+#+begin_src racket :prologue "#lang racket/base\n(require threading)"
+
+(~> 1 add1 sqrt)
+#+end_src
+
+#+RESULTS:
+: 1.4142135623730951
+
+#+begin_src racket :prologue "#lang racket/base\n(require threading)"
+   (~>
+  1
+  (+ 1)
+  (* 3)
+  )
+
+#+end_src
+
+#+RESULTS:
+: 6
+
+
+Make latex bigger
+#+begin_src emacs-lisp
+(setq org-format-latex-options (plist-put org-format-latex-options :scale 2.0))
+#+end_src
+
+#+RESULTS:
+| :foreground | default | :background | default | :scale | 2.0 | :html-foreground | Black | :html-background | Transparent | :html-scale | 1.0 | :matchers | (begin $1 $ $$ \( \[) |
+
+* SICP
+
+* Chapter 1
+** Problem 1.3
+Define a procedure that takes three numbers as arguments and returns the sum of the squares of the two larger numbers.
+
+
+Racket code using threading and sort
+
+#+begin_src racket :prologue "#lang racket/base\n(require threading)"
+     (define (foo x y z)
+       (~>
+	(list x y z)
+	(sort <)
+	(list-tail 1)
+	(map (lambda (x) (* x x)) _)
+	(foldl + 0 _)
+	)
+       )
+
+    (foo 2 3 1)
+
+#+end_src
+
+#+RESULTS:
+: 13
+
+
+
+* Junk
+* Chapter 2 Notes and exercise solutions. 2.1 - 2.97
+
+** Section 2.1
+
+
+Rational numbers
+
+#+begin_src racket :lang sicp
+  (define (make-rat n d) (cons n d))
+
+  ;;(define (numer x) (car x))
+
+ ;; (define (denom x) (cdr x))
+
+    ;;  (display  (make-rat 3 4)) (newline)
+    ;; (display (numer (make-rat 3 4))) (newline)
+    ;;(display (denom (make-rat 3 4))) (newline)
+
+    ;; (define (print-rat x)
+    ;;   (newline)
+    ;;   (display (numer x))
+    ;;   (display "/")
+    ;;   (display (denom x)))
+
+
+      ;;(define three-fourths (make-rat 3 4))
+
+    ;;(print-rat three-fourths)
+
+
+      ;; (define (add-rat x y)
+      ;;   (make-rat (+ (* (numer x) (denom y))
+      ;; 	       (* (numer y) (denom x)))
+      ;; 	    (* (denom x) (denom y))
+      ;; 	    ))
+#+end_src
+
+#+RESULTS:
+: /var/folders/lv/74p_6mpx7tq1qzpblkkdc1mr0000gn/T/babel-9NJOvo/org-babel-w7O1yq.rkt:3:7: read-syntax: expected a `)` to close `(`
+:   possible cause: indentation suggests a missing `)` before line 5
+:   context...:
+:    /Applications/Racketv8.10/collects/syntax/module-reader.rkt:214:17: body
+:    /Applications/Racketv8.10/collects/syntax/module-reader.rkt:211:2: wrap-internal
+:    .../syntax/module-reader.rkt:76:9: wrap-internal/wrapper
+
+
+
+
+
+
+#+begin_src racket :lang sicp
+
+
+  (define (make-rat n d) (cons n d))
+      ;;(define (numer x) (car x))
+      ;;(define (denom x) (cdr x))
+
+
+
+	;; (define (add-rat x y)
+	;;       (make-rat (+ (* (numer x) (denom y))
+	;; 		   (* (numer y) (denom x)))
+	;; 		(* (denom x) (denom y))))
+
+	;; (define (sub-rat x y)
+	;;   (make-rat (- (* (numer x) (denom y))
+	;; 	       (* (numer y) (denom x)))
+	;; 	    (* (denom x) (denom y))))
+
+	;; (define (mul-rat x y)
+	;;   (make-rat (* (numer x) (numer y))
+	;; 	    (* (denom x) (denom y))))
+
+	;; (define (div-rat x y)
+	;;   (make-rat (* (numer x) (denom y))
+	;; 	    (* (denom x) (numer y))))
+
+	;; (define (equal-rat? x y)
+	;;   (= (* (numer x) (denom y))
+	;;      (* (numer y) (denom x))))
+
+
+
+#+end_src
+
+#+RESULTS:
+: /Applications/Racketv8.10/share/pkgs/r5rs-lib/r5rs/main.rkt:326:26: r5rs:body: no expression in body
+:   in: (r5rs:body (define (make-rat n d) (cons n d)))
+:   location...:
+:    /Applications/Racketv8.10/share/pkgs/r5rs-lib/r5rs/main.rkt:326:26
+:   context...:
+:    /Applications/Racketv8.10/share/pkgs/r5rs-lib/r5rs/main.rkt:336:2
+
+*** representing rational numbers
+
+Here's a dotted pair. Two items that are in a list structure, but not a list
+#+begin_src racket :lang sicp
+  (define x (cons 1 2))
+  (display "x is ")(display  x) (newline)
+  (display "car x is ")(display  (car x)) (newline)
+  (display "cdr x is ")(display  (cdr x)) (newline)
+
+#+end_src
+
+#+RESULTS:
+: x is (1 . 2)
+: car x is 1
+: cdr x is 2
+: #<void>
+
+#+caption: Sum of the two-out-of-three larger numbers
+#+name: larger-squares
+#+begin_src racket :output none
+(define (proc a b c)
+  (cond ((and (> a c) (> b c))
+         (+ (* a a) (* b b)))
+        ((and (> a b) (> c b))
+         (+ (* a a) (* c c)))
+        ((and (> b a) (> c a))
+         (+ (* b b) (* c c)))))
+#+end_src
+
+#+RESULTS: larger-squares
+: /var/folders/lv/74p_6mpx7tq1qzpblkkdc1mr0000gn/T/babel-9NJOvo/org-babel-W3GUG8.rkt:5:0: begin (possibly implicit): the last form is not an expression
+:   at: (define (proc a b c) (cond ((and (> a c) (> b c)) (+ (* a a) (* b b))) ((and (> a b) (> c b)) (+ (* a a) (* c c))) ((and (> b a) (> c a)) (+ (* b b) (* c c)))))
+:   in: (begin (define (proc a b c) (cond ((and (> a c) (> b c)) (+ (* a a) (* b b))) ((and (> a b) (> c b)) (+ (* a a) (* c c))) ((and (> b a) (> c a)) (+ (* b b) (* c c))))))
+:   location...:
+:    /var/folders/lv/74p_6mpx7tq1qzpblkkdc1mr0000gn/T/babel-9NJOvo/org-babel-W3GUG8.rkt:5:0
+
+#+caption: Testing the previous procedure
+#+attr_latex: :placement [H]
+#+begin_src racket :noweb eval
+<<larger-squares>>
+(proc 4 2 3)
+#+end_src
+
+#+RESULTS:
+: 25
+
+
+
+
+* here's how to use defs from one block in another
+#+name: foo-def
+#+begin_src racket :lang sicp :results output
+  (define (foo x) (* x x))
+  ;;(foo 3)
+#+end_src
+
+#+RESULTS: foo-def
+
+#+begin_src racket :lang sicp :noweb eval
+  <<foo-def>>
+  (foo 5)
+#+end_src
+
+#+RESULTS:
+: 25
+
+#+name: rat-def
+#+begin_src racket :lang sicp :results output
+  (define (make-rat n d) (cons n d))
+   (define (numer x) (car x))
+   (define (denom x) (cdr x))
+
+   (define (add-rat x y)
+     (make-rat (+ (* (numer x) (denom y))
+		  (* (numer y) (denom x)))
+	       (* (denom x) (denom y))))
+
+   (define (sub-rat x y)
+     (make-rat (- (* (numer x) (denom y))
+		  (* (numer y) (denom x)))
+	       (* (denom x) (denom y))))
+
+   (define (mul-rat x y)
+     (make-rat (* (numer x) (numer y))
+	       (* (denom x) (denom y))))
+
+   (define (div-rat x y)
+     (make-rat (* (numer x) (denom y))
+	       (* (denom x) (numer y))))
+
+   (define (equal-rat? x y)
+     (= (* (numer x) (denom y))
+	(* (numer y) (denom x))))
+
+  #+end_src
+
+#+RESULTS: rat-def
+
+#+begin_src racket :lang sicp :noweb eval
+  <<rat-def>>
+  (define one-four (make-rat 1 4))
+    (add-rat one-four (make-rat 3 4))
+#+end_src
+
+#+RESULTS:
+: make-rat: undefined;
+:  cannot use before initialization
+:   context...:
+:    /var/folders/lv/74p_6mpx7tq1qzpblkkdc1mr0000gn/T/babel-9NJOvo/org-babel-fF89TC.rkt:3:0
+:    body of "/var/folders/lv/74p_6mpx7tq1qzpblkkdc1mr0000gn/T/babel-9NJOvo/org-babel-fF89TC.rkt"
